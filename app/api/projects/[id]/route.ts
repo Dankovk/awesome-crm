@@ -57,7 +57,7 @@ export async function PUT(
       }
       if (githubResponse.status === 403) {
         return NextResponse.json(
-          { message: 'Доступ заборонено. Можливо, репозиторій став приватним і требує GitHub токен.' },
+          { message: 'Доступ заборонено. Можливо, репозиторій став приватним і потребує GitHub токен.' },
           { status: 403 }
         )
       }

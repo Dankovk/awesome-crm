@@ -51,7 +51,7 @@ GITHUB_TOKEN="ghp_your_github_personal_access_token"
 # Запуск в production режиме
 docker-compose up -d
 
-# Или запуск с логами
+# Або запуск з логами
 docker-compose up
 ```
 
@@ -121,7 +121,7 @@ docker-compose restart app
 # Підключення до контейнера додатку
 docker exec -it github-crm-app sh
 
-# Подключение к контейнеру базы данных
+# Підключення до контейнера бази даних
 docker exec -it github-crm-db psql -U postgres -d github_crm
 ```
 
@@ -153,14 +153,14 @@ docker-compose build --no-cache app
 - URL: http://localhost:8080
 - Система: PostgreSQL
 - Сервер: postgres-dev
-- Пользователь: postgres
+- Користувач: postgres
 - Пароль: postgres
 - База даних: github_crm_dev
 
 ### Backup и Restore
 
 ```bash
-# Создание backup
+# Створення backup
 docker exec github-crm-db pg_dump -U postgres github_crm > backup.sql
 
 # Восстановление из backup
@@ -172,7 +172,7 @@ docker exec -i github-crm-db psql -U postgres github_crm < backup.sql
 ### Для продакшену обов'язково змініть:
 
 1. **NEXTAUTH_SECRET** - сгенерируйте случайную строку
-2. **Пароли базы данных** - используйте сильные пароли
+2. **Паролі бази даних** - використовуйте сильні паролі
 3. **Порты** - не выставляйте БД наружу в продакшене
 
 ### Генерация секретного ключа
@@ -235,7 +235,7 @@ docker-compose down
 ### Масштабирование
 
 ```bash
-# Запуск нескольких экземпляров приложения
+# Запуск кількох екземплярів додатку
 docker-compose up --scale app=3
 ```
 
