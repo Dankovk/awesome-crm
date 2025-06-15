@@ -14,7 +14,7 @@ export default defineConfig({
     ssl: process.env.DATABASE_SSL === 'true',
   },
   verbose: true,
-  strict: true,
+  strict: true
 })  
 
 

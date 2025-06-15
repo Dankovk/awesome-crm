@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:up": "drizzle-kit up",
-    "db:generate": "drizzle-kit generate",
-    "db:studio": "drizzle-kit studio",
-    "db:push": "drizzle-kit push"
+    "db:up": "drizzle-kit up ",
+    "db:generate": "drizzle-kit generate ",
+    "db:studio": "drizzle-kit studio ",
+    "db:push": "drizzle-kit push --force"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
