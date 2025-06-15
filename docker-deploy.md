@@ -18,7 +18,7 @@
 git clone <your-repo-url>
 cd github-crm
 
-# Создаем файл с переменными окружения
+# Створюємо файл зі змінними оточення
 cp env.example .env.local
 ```
 
@@ -45,7 +45,7 @@ GITHUB_TOKEN="ghp_your_github_personal_access_token"
 3. Выберите scopes: `public_repo`
 4. Скопируйте токен и вставьте в `.env.local`
 
-### 4. Запуск приложения
+### 4. Запуск додатку
 
 ```bash
 # Запуск в production режиме
