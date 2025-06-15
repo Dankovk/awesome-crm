@@ -25,11 +25,19 @@ echo "✅ Database is ready!"
 
 # Generate Drizzle migrations
 echo "📦 Generating Drizzle migrations..."
-bun run db:generate
+if bunx drizzle-kit generate; then
+    echo "✅ Migrations generated successfully"
+else
+    echo "⚠️  Migration generation failed, but continuing..."
+fi
 
 # Apply database migrations
 echo "🔄 Running database migrations..."
-bun run db:push
+if bunx drizzle-kit push; then
+    echo "✅ Migrations applied successfully"
+else
+    echo "⚠️  Migration push failed, but continuing..."
+fi
 
 echo "🎉 Application is starting..."
 

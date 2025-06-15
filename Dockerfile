@@ -42,6 +42,9 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/tailwind.config.js ./tailwind.config.js
 COPY --from=builder /app/postcss.config.js ./postcss.config.js
 
+# Копируем node_modules для доступа к drizzle-kit
+COPY --from=builder /app/node_modules ./node_modules
+
 # Копируем Drizzle схемы и миграции
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/lib/schema.ts ./lib/schema.ts
