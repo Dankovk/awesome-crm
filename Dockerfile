@@ -45,7 +45,7 @@ COPY --from=builder /app/postcss.config.js ./postcss.config.js
 # Копіюємо node_modules для доступу до drizzle-kit
 COPY --from=builder /app/node_modules ./node_modules
 
-# Копируем Drizzle схемы и миграции
+# Копіюємо Drizzle схеми та міграції
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/lib/schema.ts ./lib/schema.ts
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
@@ -54,7 +54,7 @@ COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Копируем и делаем исполняемым entrypoint скрипт
+# Копіюємо та робимо виконуваним entrypoint скрипт
 COPY --chown=nextjs:nodejs ./scripts/docker-entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
@@ -63,7 +63,7 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Используем entrypoint скрипт
+# Використовуємо entrypoint скрипт
 ENTRYPOINT ["./entrypoint.sh"]
 
 # Команда запуска
