@@ -13,17 +13,17 @@ export async function PUT(
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
-      return NextResponse.json({ message: 'Не авторизован' }, { status: 401 })
+      return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
     const project = await db.select().from(projects).where(eq(projects.id, params.id)).limit(1)
 
     if (!project[0]) {
-      return NextResponse.json({ message: 'Проект не найден' }, { status: 404 })
+      return NextResponse.json({ message: 'Проєкт не знайдено' }, { status: 404 })
     }
 
     if (project[0].userId !== session.user.id) {
-      return NextResponse.json({ message: 'Нет доступа' }, { status: 403 })
+      return NextResponse.json({ message: 'Нет доступу' }, { status: 403 })
     }
 
     // Get user info including GitHub token
@@ -42,7 +42,7 @@ export async function PUT(
       headers['Authorization'] = `token ${githubToken}`
     }
 
-    // Получаем свежие данные из GitHub API
+    // Получаємо свежие дані з GitHub API
     const repoPath = `${project[0].owner}/${project[0].name}`
     const githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
       headers,
@@ -51,32 +51,32 @@ export async function PUT(
     if (!githubResponse.ok) {
       if (githubResponse.status === 404) {
         return NextResponse.json(
-          { message: 'Репозиторий не найден или стал приватным' },
+          { message: 'Репозиторій не знайдено або став приватним' },
           { status: 404 }
         )
       }
       if (githubResponse.status === 403) {
         return NextResponse.json(
-          { message: 'Доступ запрещен. Возможно, репозиторий стал приватным и требует GitHub токен.' },
+          { message: 'Доступ заборонено. Можливо, репозиторій став приватним і требує GitHub токен.' },
           { status: 403 }
         )
       }
       if (githubResponse.status === 429) {
         return NextResponse.json(
-          { message: 'Превышен лимит запросов к GitHub API. Попробуйте позже.' },
+          { message: 'Превышен лимит запросов к GitHub API. Попробуйте пізніше.' },
           { status: 429 }
         )
       }
       
       return NextResponse.json(
-        { message: 'Ошибка при обновлении данных из GitHub' },
+        { message: 'Помилка при оновленні даних з GitHub' },
         { status: 500 }
       )
     }
 
     const githubData = await githubResponse.json()
 
-    // Обновляем проект
+    // Оновлюємо проєкт
     const [updatedProject] = await db
       .update(projects)
       .set({
@@ -94,7 +94,7 @@ export async function PUT(
   } catch (error) {
     console.error('Update project error:', error)
     return NextResponse.json(
-      { message: 'Ошибка при обновлении проекта' },
+      { message: 'Помилка при оновленні проєкту' },
       { status: 500 }
     )
   }
@@ -108,26 +108,26 @@ export async function DELETE(
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
-      return NextResponse.json({ message: 'Не авторизован' }, { status: 401 })
+      return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
     const project = await db.select().from(projects).where(eq(projects.id, params.id)).limit(1)
 
     if (!project[0]) {
-      return NextResponse.json({ message: 'Проект не найден' }, { status: 404 })
+      return NextResponse.json({ message: 'Проєкт не знайдено' }, { status: 404 })
     }
 
     if (project[0].userId !== session.user.id) {
-      return NextResponse.json({ message: 'Нет доступа' }, { status: 403 })
+      return NextResponse.json({ message: 'Нет доступу' }, { status: 403 })
     }
 
     await db.delete(projects).where(eq(projects.id, params.id))
 
-    return NextResponse.json({ message: 'Проект удален' })
+    return NextResponse.json({ message: 'Проєкт видалено' })
   } catch (error) {
     console.error('Delete project error:', error)
     return NextResponse.json(
-      { message: 'Ошибка при удалении проекта' },
+      { message: 'Помилка при видаленні проєкту' },
       { status: 500 }
     )
   }

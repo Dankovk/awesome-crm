@@ -1,12 +1,12 @@
 #!/bin/sh
 
-echo "🚀 Starting GitHub CRM application..."
+echo "🚀 Запуск GitHub CRM додатку..."
 
-# Extract database host from DATABASE_URL for Railway
+# Витягуємо хост бази даних з DATABASE_URL для Railway
 DB_HOST=$(echo $DATABASE_URL | sed -n 's/.*@\([^:]*\):.*/\1/p')
 DB_PORT=$(echo $DATABASE_URL | sed -n 's/.*:\([0-9]*\)\/.*/\1/p')
 
-# Default to Railway's internal networking if extraction fails
+# За замовчуванням використовуємо внутрішню мережу Railway якщо витягування не вдалося
 if [ -z "$DB_HOST" ]; then
     DB_HOST="postgres"
 fi
@@ -14,32 +14,32 @@ if [ -z "$DB_PORT" ]; then
     DB_PORT="5432"
 fi
 
-# Wait for database to be ready
-echo "⏳ Waiting for database to be ready at $DB_HOST:$DB_PORT..."
+# Чекаємо поки база даних стане готовою
+echo "⏳ Очікування готовності бази даних на $DB_HOST:$DB_PORT..."
 until nc -z $DB_HOST $DB_PORT; do
-  echo "Database is unavailable - sleeping"
+  echo "База даних недоступна - очікування"
   sleep 1
 done
 
-echo "✅ Database is ready!"
+echo "✅ База даних готова!"
 
-# Generate Drizzle migrations
-echo "📦 Generating Drizzle migrations..."
+# Генеруємо міграції Drizzle
+echo "📦 Генерація міграцій Drizzle..."
 if bunx drizzle-kit generate; then
-    echo "✅ Migrations generated successfully"
+    echo "✅ Міграції згенеровано успішно"
 else
-    echo "⚠️  Migration generation failed, but continuing..."
+    echo "⚠️  Генерація міграцій не вдалася, але продовжуємо..."
 fi
 
-# Apply database migrations
-echo "🔄 Running database migrations..."
+# Застосовуємо міграції бази даних
+echo "🔄 Застосування міграцій бази даних..."
 if bunx drizzle-kit push --force; then
-    echo "✅ Migrations applied successfully"
+    echo "✅ Міграції застосовано успішно"
 else
-    echo "⚠️  Migration push failed, but continuing..."
+    echo "⚠️  Застосування міграцій не вдалося, але продовжуємо..."
 fi
 
-echo "🎉 Application is starting..."
+echo "🎉 Додаток запускається..."
 
-# Start the application
+# Запускаємо додаток
 exec "$@" 

@@ -9,8 +9,8 @@ import { X, Github, Info } from 'lucide-react'
 
 const addProjectSchema = z.object({
   repoPath: z.string()
-    .min(1, 'Поле обязательно для заполнения')
-    .regex(/^[\w\-\.]+\/[\w\-\.]+$/, 'Неверный формат пути (например: facebook/react)'),
+    .min(1, 'Поле обов\'язкове для заповнення')
+    .regex(/^[\w\-\.]+\/[\w\-\.]+$/, 'Неправильний формат шляху (наприклад: facebook/react)'),
 })
 
 type AddProjectForm = z.infer<typeof addProjectSchema>
@@ -61,15 +61,15 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
       if (res.ok) {
         const newProject = await res.json()
         onAdd(newProject)
-        toast.success('Проект добавлен успешно!')
+        toast.success('Проєкт додано успішно!')
         reset()
         onClose()
       } else {
         const error = await res.json()
-        toast.error(error.message || 'Ошибка при добавлении проекта')
+        toast.error(error.message || 'Помилка при додаванні проєкту')
       }
     } catch (error) {
-      toast.error('Ошибка при добавлении проекта')
+      toast.error('Помилка при додаванні проєкту')
     } finally {
       setIsLoading(false)
     }
@@ -101,11 +101,11 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
               </div>
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Добавить новый проект
+                  Додати новий проєкт
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Введите путь к GitHub репозиторию в формате owner/repository
+                    Введіть шлях до GitHub репозиторію у форматі owner/repository
                   </p>
                   
                   {/* Info about public repos */}
@@ -113,10 +113,10 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
                     <div className="flex">
                       <Info className="h-4 w-4 text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
                       <div className="text-sm text-blue-700">
-                        <p className="font-medium">Публичные репозитории</p>
+                        <p className="font-medium">Публічні репозиторії</p>
                         <p className="mt-1">
-                          Вы можете добавлять публичные репозитории без GitHub токена. 
-                          Для приватных репозиториев войдите через GitHub.
+                          Ви можете додавати публічні репозиторії без GitHub токену. 
+                          Для приватних репозиторіїв увійдіть через GitHub.
                         </p>
                       </div>
                     </div>
@@ -126,13 +126,13 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
                 <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
                   <div>
                     <label htmlFor="repoPath" className="block text-sm font-medium text-gray-700">
-                      Путь к репозиторию
+                      Шлях до репозиторію
                     </label>
                     <div className="mt-1">
                       <input
                         {...register('repoPath')}
                         type="text"
-                        placeholder="Например: facebook/react"
+                        placeholder="Наприклад: facebook/react"
                         className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
                         disabled={isLoading}
                       />
@@ -148,7 +148,7 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
                       disabled={isLoading}
                       className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isLoading ? 'Добавляем...' : 'Добавить'}
+                      {isLoading ? 'Додаємо...' : 'Додати'}
                     </button>
                     <button
                       type="button"
@@ -156,7 +156,7 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
                       disabled={isLoading}
                       className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:w-auto sm:text-sm"
                     >
-                      Отмена
+                      Відміна
                     </button>
                   </div>
                 </form>

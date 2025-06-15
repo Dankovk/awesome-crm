@@ -15,21 +15,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, password } = registerSchema.parse(body)
 
-    // Проверяем, существует ли пользователь
+    // Перевіряємо, чи існує користувач
     const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1)
 
     if (existingUser[0]) {
       return NextResponse.json(
-        { message: 'Пользователь с таким email уже существует' },
+        { message: 'Користувач з таким email вже існує' },
         { status: 400 }
       )
     }
 
-    // Хешируем пароль
+    // Хешуємо пароль
     const hashedPassword = await bcrypt.hash(password, 12)
     const now = new Date()
 
-    // Создаём пользователя
+    // Створюємо користувача
     const [user] = await db.insert(users).values({
       email,
       password: hashedPassword,
@@ -38,20 +38,20 @@ export async function POST(request: NextRequest) {
     }).returning()
 
     return NextResponse.json(
-      { message: 'Пользователь создан успешно', userId: user.id },
+      { message: 'Користувача створено успішно', userId: user.id },
       { status: 201 }
     )
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: 'Неверные данные', errors: error.errors },
+        { message: 'Неправильні дані', errors: error.errors },
         { status: 400 }
       )
     }
 
     console.error('Registration error:', error)
     return NextResponse.json(
-      { message: 'Внутренняя ошибка сервера' },
+      { message: 'Внутрішня помилка сервера' },
       { status: 500 }
     )
   }

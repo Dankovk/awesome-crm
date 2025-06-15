@@ -7,7 +7,7 @@ import { eq, desc, and } from 'drizzle-orm'
 import { z } from 'zod'
 
 const createProjectSchema = z.object({
-  repoPath: z.string().regex(/^[\w\-\.]+\/[\w\-\.]+$/, 'Неверный формат пути к репозиторию (например: facebook/react)'),
+  repoPath: z.string().regex(/^[\w\-\.]+\/[\w\-\.]+$/, 'Неверний формат пути до репозиторію (наприклад: facebook/react)'),
 })
 
 export async function GET(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
-      return NextResponse.json({ message: 'Не авторизован' }, { status: 401 })
+      return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
     const userProjects = await db
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get projects error:', error)
     return NextResponse.json(
-      { message: 'Ошибка при загрузке проектов' },
+      { message: 'Помилка при завантаженні проєктів' },
       { status: 500 }
     )
   }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id) {
-      return NextResponse.json({ message: 'Не авторизован' }, { status: 401 })
+      return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
     const body = await request.json()
@@ -51,10 +51,10 @@ export async function POST(request: NextRequest) {
     const [user] = await db.select().from(users).where(eq(users.id, session.user.id)).limit(1)
     
     if (!user) {
-      return NextResponse.json({ message: 'Пользователь не найден' }, { status: 404 })
+      return NextResponse.json({ message: 'Користувач не знайдений' }, { status: 404 })
     }
 
-    // Проверяем, не существует ли уже такой проект у пользователя
+    // Перевіряємо, чи не існує вже такий проєкт у користувача
     const existingProject = await db
       .select()
       .from(projects)
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     if (existingProject[0]) {
       return NextResponse.json(
-        { message: 'Этот репозиторий уже добавлен' },
+        { message: 'Цей репозиторій вже доданий' },
         { status: 400 }
       )
     }
@@ -115,43 +115,43 @@ export async function POST(request: NextRequest) {
     if (!githubResponse || !githubResponse.ok) {
       if (githubResponse?.status === 404) {
         return NextResponse.json(
-          { message: 'Репозиторий не найден или является приватным' },
+          { message: 'Репозиторій не знайдений або є приватним' },
           { status: 404 }
         )
       }
       if (githubResponse?.status === 403) {
         return NextResponse.json(
-          { message: 'Доступ запрещен. Возможно, репозиторий приватный и требует GitHub токен.' },
+          { message: 'Доступ заборонений. Можливо, репозиторій приватний і потребує GitHub токен.' },
           { status: 403 }
         )
       }
       if (githubResponse?.status === 401) {
         return NextResponse.json(
-          { message: 'Неверный GitHub токен. Войдите через GitHub для доступа к приватным репозиториям.' },
+          { message: 'Неправильний GitHub токен. Увійдіть через GitHub для доступу до приватних репозиторіїв.' },
           { status: 401 }
         )
       }
       if (githubResponse?.status === 429) {
         return NextResponse.json(
-          { message: 'Превышен лимит запросов к GitHub API. Попробуйте позже или войдите через GitHub.' },
+          { message: 'Перевищений ліміт запитів до GitHub API. Спробуйте пізніше або увійдіть через GitHub.' },
           { status: 429 }
         )
       }
       
       return NextResponse.json(
-        { message: 'Ошибка при получении данных из GitHub API' },
+        { message: 'Помилка при отриманні даних з GitHub API' },
         { status: 500 }
       )
     }
 
     if (!githubData) {
       return NextResponse.json(
-        { message: 'Не удалось получить данные репозитория' },
+        { message: 'Не вдалося отримати дані репозиторію' },
         { status: 500 }
       )
     }
 
-    // Создаём проект в базе данных
+    // Створюємо проєкт в базі даних
     const [project] = await db.insert(projects).values({
       owner,
       name,
@@ -169,14 +169,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: 'Неверные данные', errors: error.errors },
+        { message: 'Неправильні дані', errors: error.errors },
         { status: 400 }
       )
     }
 
     console.error('Create project error:', error)
     return NextResponse.json(
-      { message: 'Ошибка при создании проекта' },
+      { message: 'Помилка при створенні проєкту' },
       { status: 500 }
     )
   }

@@ -49,10 +49,10 @@ export default function DashboardPage() {
         const data = await res.json()
         setProjects(data)
       } else {
-        toast.error('Ошибка при загрузке проектов')
+        toast.error('Помилка при завантаженні проєктів')
       }
     } catch (error) {
-      toast.error('Ошибка при загрузке проектов')
+      toast.error('Помилка при завантаженні проєктів')
     } finally {
       setLoading(false)
     }
@@ -69,12 +69,12 @@ export default function DashboardPage() {
       if (res.ok) {
         const updatedProject = await res.json()
         setProjects(prev => prev.map(p => p.id === projectId ? updatedProject : p))
-        toast.success('Проект обновлен')
+        toast.success('Проєкт оновлено')
       } else {
-        toast.error('Ошибка при обновлении проекта')
+        toast.error('Помилка при оновленні проєкту')
       }
     } catch (error) {
-      toast.error('Ошибка при обновлении проекта')
+      toast.error('Помилка при оновленні проєкту')
     } finally {
       setUpdatingProjects(prev => {
         const newSet = new Set(prev)
@@ -85,7 +85,7 @@ export default function DashboardPage() {
   }
 
   const handleDeleteProject = async (projectId: string) => {
-    if (!confirm('Вы уверены, что хотите удалить этот проект?')) {
+    if (!confirm('Ви впевнені, що хочете видалити цей проєкт?')) {
       return
     }
 
@@ -96,12 +96,12 @@ export default function DashboardPage() {
       
       if (res.ok) {
         setProjects(prev => prev.filter(p => p.id !== projectId))
-        toast.success('Проект удален')
+        toast.success('Проєкт видалено')
       } else {
-        toast.error('Ошибка при удалении проекта')
+        toast.error('Помилка при видаленні проєкту')
       }
     } catch (error) {
-      toast.error('Ошибка при удалении проекта')
+      toast.error('Помилка при видаленні проєкту')
     }
   }
 
@@ -129,14 +129,14 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-700">
-                Привет, {session?.user?.email}
+                Привіт, {session?.user?.email}
               </span>
               <button
                 onClick={() => signOut()}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               >
                 <LogOut className="h-4 w-4 mr-1" />
-                Выйти
+                Вийти
               </button>
             </div>
           </div>
@@ -147,22 +147,22 @@ export default function DashboardPage() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Мои проекты</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Мої проєкти</h2>
             <button
               onClick={() => setShowAddModal(true)}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Добавить проект
+              Додати проєкт
             </button>
           </div>
 
           {projects.length === 0 ? (
             <div className="text-center py-12">
               <Github className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">Нет проектов</h3>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Немає проєктів</h3>
               <p className="mt-1 text-sm text-gray-500">
-                Начните с добавления вашего первого GitHub репозитория.
+                Почніть з додавання вашого першого GitHub репозиторію.
               </p>
               <div className="mt-6">
                 <button
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                   className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Добавить проект
+                  Додати проєкт
                 </button>
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                         className="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
                       >
                         <RefreshCw className={`h-4 w-4 mr-1 ${updatingProjects.has(project.id) ? 'animate-spin' : ''}`} />
-                        Обновить
+                        Оновити
                       </button>
                       <a
                         href={project.url}
@@ -239,7 +239,7 @@ export default function DashboardPage() {
                         rel="noopener noreferrer"
                         className="flex-1 inline-flex justify-center items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                       >
-                        Открыть
+                        Відкрити
                       </a>
                       <button
                         onClick={() => handleDeleteProject(project.id)}

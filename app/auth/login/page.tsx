@@ -11,8 +11,8 @@ import { toast } from 'react-hot-toast'
 import { Eye, EyeOff, Github } from 'lucide-react'
 
 const loginSchema = z.object({
-  email: z.string().email('Неверный формат email'),
-  password: z.string().min(6, 'Пароль должен содержать минимум 6 символов'),
+  email: z.string().email('Неверний формат email'),
+  password: z.string().min(6, 'Пароль повинен містити мінімум 6 символів'),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -48,13 +48,13 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        toast.error('Неверный email или пароль')
+        toast.error('Неправильний email або пароль')
       } else {
-        toast.success('Успешный вход!')
+        toast.success('Успішний вхід!')
         router.push('/dashboard')
       }
     } catch (error) {
-      toast.error('Произошла ошибка при входе')
+      toast.error('Сталася помилка при вході')
     } finally {
       setIsLoading(false)
     }
@@ -65,7 +65,7 @@ export default function LoginPage() {
     try {
       await signIn('github', { callbackUrl: '/dashboard' })
     } catch (error) {
-      toast.error('Ошибка входа через GitHub')
+      toast.error('Помилка входу через GitHub')
       setIsLoading(false)
     }
   }
@@ -76,7 +76,7 @@ export default function LoginPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-gray-600">Загрузка...</p>
+          <p className="mt-2 text-gray-600">Завантаження...</p>
         </div>
       </div>
     )
@@ -95,15 +95,15 @@ export default function LoginPage() {
             <Github className="h-6 w-6 text-white" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Войти в аккаунт
+            Увійти в акаунт
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Или{' '}
+            Або{' '}
             <Link
               href="/auth/register"
               className="font-medium text-primary hover:text-primary/80"
             >
-              создать новый аккаунт
+              створити новий акаунт
             </Link>
           </p>
         </div>
@@ -117,7 +117,7 @@ export default function LoginPage() {
             className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Github className="h-5 w-5 mr-2" />
-            Войти через GitHub
+            Увійти через GitHub
           </button>
         </div>
 
@@ -127,7 +127,7 @@ export default function LoginPage() {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-50 text-gray-500">или</span>
+            <span className="px-2 bg-gray-50 text-gray-500">або</span>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Введите email"
+                placeholder="Введіть email"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -158,7 +158,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   className="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="Введите пароль"
+                  placeholder="Введіть пароль"
                 />
                 <button
                   type="button"
@@ -184,7 +184,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Входим...' : 'Войти'}
+              {isLoading ? 'Входимо...' : 'Увійти'}
             </button>
           </div>
         </form>
