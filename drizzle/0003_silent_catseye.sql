@@ -1,0 +1,1 @@
+ALTER TABLE "Project" DROP CONSTRAINT "Project_githubId_unique";
