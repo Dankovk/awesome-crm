@@ -1,48 +1,48 @@
-# Используем официальный Node.js образ
+# Використовуємо офіційний Node.js образ
 FROM oven/bun:alpine AS base
 
-# Устанавливаем необходимые пакеты
+# Встановлюємо необхідні пакети
 RUN apk add --no-cache netcat-openbsd 
 
-# Этап установки зависимостей
+# Етап встановлення залежностей
 FROM base AS deps
 WORKDIR /app
 
-# Копируем файлы для установки зависимостей
+# Копіюємо файли для встановлення залежностей
 COPY package.json package-lock.json* ./
 RUN bun i 
 
-# Этап сборки приложения
+# Етап збірки додатку
 FROM base AS builder
 WORKDIR /app
 
-# Копируем зависимости
+# Копіюємо залежності
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Генерируем Drizzle миграции
 RUN bun run db:generate
 
-# Собираем приложение
+# Збираємо додаток
 RUN bun run build
 
-# Этап продакшн образа
+# Етап продакшн образу
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 
-# Создаем пользователя для безопасности
+# Створюємо користувача для безпеки
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Копируем необходимые файлы
+# Копіюємо необхідні файли
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.ts ./next.config.ts
 COPY --from=builder /app/tailwind.config.js ./tailwind.config.js
 COPY --from=builder /app/postcss.config.js ./postcss.config.js
 
-# Копируем node_modules для доступа к drizzle-kit
+# Копіюємо node_modules для доступу до drizzle-kit
 COPY --from=builder /app/node_modules ./node_modules
 
 # Копируем Drizzle схемы и миграции
@@ -50,7 +50,7 @@ COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/lib/schema.ts ./lib/schema.ts
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 
-# Копируем собранное приложение
+# Копіюємо зібраний додаток
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 

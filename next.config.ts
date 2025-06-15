@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['avatars.githubusercontent.com'],
   },
-  // Необходимо для Docker deployment
+  // Необхідно для Docker deployment
   output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,

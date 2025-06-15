@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
-import { db } from '@/lib/prisma'
+import { db } from '@/lib/db'
 import { projects, users } from '@/lib/schema'
 import { eq, desc, and } from 'drizzle-orm'
 import { z } from 'zod'

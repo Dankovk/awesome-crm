@@ -1,5 +1,5 @@
 services:
-  # PostgreSQL база данных
+  # PostgreSQL база даних
   postgres:
     image: postgres:15-alpine
     container_name: github-crm-db
@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # # Next.js приложение
+  # # Next.js додаток
   # app:
   #   build:
   #     context: .

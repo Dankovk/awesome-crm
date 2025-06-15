@@ -1,4 +1,4 @@
-# Зависимости
+# Залежності
 node_modules
 npm-debug.log*
 yarn-debug.log*
@@ -6,7 +6,7 @@ yarn-error.log*
 pnpm-debug.log*
 .pnpm-debug.log*
 
-# Локальные переменные среды
+# Локальні змінні середовища
 .env
 .env*.local
 .env.local
@@ -91,4 +91,3 @@ README.md
 
 # Prisma
 .env
-prisma/migrations/
