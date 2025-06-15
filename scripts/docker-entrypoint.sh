@@ -33,7 +33,7 @@ fi
 
 # Apply database migrations
 echo "🔄 Running database migrations..."
-if bunx drizzle-kit push; then
+if bunx drizzle-kit push --force; then
     echo "✅ Migrations applied successfully"
 else
     echo "⚠️  Migration push failed, but continuing..."
