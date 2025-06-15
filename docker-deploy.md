@@ -109,7 +109,7 @@ docker-compose logs -f postgres
 # Перезапуск всех сервисов
 docker-compose restart
 
-# Перезапуск только приложения
+# Перезапуск тільки додатку
 docker-compose restart app
 ```
 
