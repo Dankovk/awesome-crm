@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../auth/[...nextauth]/route'
-import { db } from '@/lib/db'
-import { projects, users } from '@/lib/schema'
-import { eq, desc, and } from 'drizzle-orm'
+import { authOptions } from '@/lib/auth'
+import { ProjectEntity } from '@/lib/entities/project'
+import { UserEntity } from '@/lib/entities/user'
 import { z } from 'zod'
 
 const createProjectSchema = z.object({
@@ -18,11 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
-    const userProjects = await db
-      .select()
-      .from(projects)
-      .where(eq(projects.userId, session.user.id))
-      .orderBy(desc(projects.createdAt))
+    const userProjects = await ProjectEntity.findByUserId(session.user.id)
 
     return NextResponse.json(userProjects)
   } catch (error) {
@@ -48,26 +43,14 @@ export async function POST(request: NextRequest) {
     const [owner, name] = repoPath.split('/')
 
     // Get user info including GitHub token
-    const [user] = await db.select().from(users).where(eq(users.id, session.user.id)).limit(1)
+    const user = await UserEntity.findById(session.user.id)
     
     if (!user) {
       return NextResponse.json({ message: 'Користувач не знайдений' }, { status: 404 })
     }
 
     // Перевіряємо, чи не існує вже такий проєкт у користувача
-    const existingProject = await db
-      .select()
-      .from(projects)
-      .where(
-        and(
-          eq(projects.userId, session.user.id),
-          eq(projects.owner, owner),
-          eq(projects.name, name)
-        )
-      )
-      .limit(1)
-
-    if (existingProject[0]) {
+    if (await ProjectEntity.exists(session.user.id, owner, name)) {
       return NextResponse.json(
         { message: 'Цей репозиторій вже доданий' },
         { status: 400 }
@@ -152,7 +135,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Створюємо проєкт в базі даних
-    const [project] = await db.insert(projects).values({
+    const project = await ProjectEntity.create({
       owner,
       name,
       url: githubData.html_url,
@@ -163,7 +146,7 @@ export async function POST(request: NextRequest) {
       description: githubData.description,
       language: githubData.language,
       userId: session.user.id,
-    }).returning()
+    })
 
     return NextResponse.json(project, { status: 201 })
   } catch (error) {

@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../../auth/[...nextauth]/route'
-import { db } from '@/lib/db'
-import { projects, users } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
+import { authOptions } from '@/lib/auth'
+import { ProjectEntity, type GitHubRepoData } from '@/lib/entities/project'
+import { UserEntity } from '@/lib/entities/user'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -16,18 +15,19 @@ export async function PUT(
       return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
-    const project = await db.select().from(projects).where(eq(projects.id, params.id)).limit(1)
+    const { id } = await params
+    const project = await ProjectEntity.findById(id)
 
-    if (!project[0]) {
+    if (!project) {
       return NextResponse.json({ message: 'Проєкт не знайдено' }, { status: 404 })
     }
 
-    if (project[0].userId !== session.user.id) {
+    if (!await ProjectEntity.belongsToUser(id, session.user.id)) {
       return NextResponse.json({ message: 'Немає доступу' }, { status: 403 })
     }
 
     // Get user info including GitHub token
-    const [user] = await db.select().from(users).where(eq(users.id, session.user.id)).limit(1)
+    const user = await UserEntity.findById(session.user.id)
     
     // Use user's GitHub token if available, otherwise try without authentication for public repos
     const githubToken = user?.githubToken || process.env.GITHUB_TOKEN
@@ -43,7 +43,7 @@ export async function PUT(
     }
 
     // Отримуємо свіжі дані з GitHub API
-    const repoPath = `${project[0].owner}/${project[0].name}`
+    const repoPath = `${project.owner}/${project.name}`
     const githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
       headers,
     })
@@ -74,21 +74,10 @@ export async function PUT(
       )
     }
 
-    const githubData = await githubResponse.json()
+    const githubData: GitHubRepoData = await githubResponse.json()
 
     // Оновлюємо проєкт
-    const [updatedProject] = await db
-      .update(projects)
-      .set({
-        stars: githubData.stargazers_count,
-        forks: githubData.forks_count,
-        issues: githubData.open_issues_count,
-        description: githubData.description,
-        language: githubData.language,
-        updatedAt: new Date(),
-      })
-      .where(eq(projects.id, params.id))
-      .returning()
+    const updatedProject = await ProjectEntity.updateFromGitHub(id, githubData)
 
     return NextResponse.json(updatedProject)
   } catch (error) {
@@ -102,7 +91,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -111,17 +100,18 @@ export async function DELETE(
       return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
-    const project = await db.select().from(projects).where(eq(projects.id, params.id)).limit(1)
+    const { id } = await params
+    const project = await ProjectEntity.findById(id)
 
-    if (!project[0]) {
+    if (!project) {
       return NextResponse.json({ message: 'Проєкт не знайдено' }, { status: 404 })
     }
 
-    if (project[0].userId !== session.user.id) {
+    if (!await ProjectEntity.belongsToUser(id, session.user.id)) {
       return NextResponse.json({ message: 'Немає доступу' }, { status: 403 })
     }
 
-    await db.delete(projects).where(eq(projects.id, params.id))
+    await ProjectEntity.delete(id)
 
     return NextResponse.json({ message: 'Проєкт видалено' })
   } catch (error) {

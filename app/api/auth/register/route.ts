@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
-import { users } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
-import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { UserEntity } from '@/lib/entities/user'
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -16,26 +13,18 @@ export async function POST(request: NextRequest) {
     const { email, password } = registerSchema.parse(body)
 
     // Перевіряємо, чи існує користувач
-    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1)
-
-    if (existingUser[0]) {
+    if (await UserEntity.exists(email)) {
       return NextResponse.json(
         { message: 'Користувач з таким email вже існує' },
         { status: 400 }
       )
     }
 
-    // Хешуємо пароль
-    const hashedPassword = await bcrypt.hash(password, 12)
-    const now = new Date()
-
     // Створюємо користувача
-    const [user] = await db.insert(users).values({
+    const user = await UserEntity.create({
       email,
-      password: hashedPassword,
-      createdAt: now,
-      updatedAt: now,
-    }).returning()
+      password,
+    })
 
     return NextResponse.json(
       { message: 'Користувача створено успішно', userId: user.id },
