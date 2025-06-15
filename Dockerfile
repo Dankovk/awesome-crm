@@ -66,5 +66,5 @@ ENV HOSTNAME "0.0.0.0"
 # Використовуємо entrypoint скрипт
 ENTRYPOINT ["./entrypoint.sh"]
 
-# Команда запуска
+# Команда запуску
 CMD ["bun", "server.js"] 
