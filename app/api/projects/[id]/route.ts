@@ -23,7 +23,7 @@ export async function PUT(
     }
 
     if (project[0].userId !== session.user.id) {
-      return NextResponse.json({ message: 'Нет доступу' }, { status: 403 })
+      return NextResponse.json({ message: 'Немає доступу' }, { status: 403 })
     }
 
     // Get user info including GitHub token
@@ -42,7 +42,7 @@ export async function PUT(
       headers['Authorization'] = `token ${githubToken}`
     }
 
-    // Получаємо свежие дані з GitHub API
+    // Отримуємо свіжі дані з GitHub API
     const repoPath = `${project[0].owner}/${project[0].name}`
     const githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
       headers,
@@ -63,7 +63,7 @@ export async function PUT(
       }
       if (githubResponse.status === 429) {
         return NextResponse.json(
-          { message: 'Превышен лимит запросов к GitHub API. Попробуйте пізніше.' },
+          { message: 'Перевищено ліміт запитів до GitHub API. Спробуйте пізніше.' },
           { status: 429 }
         )
       }
@@ -118,7 +118,7 @@ export async function DELETE(
     }
 
     if (project[0].userId !== session.user.id) {
-      return NextResponse.json({ message: 'Нет доступу' }, { status: 403 })
+      return NextResponse.json({ message: 'Немає доступу' }, { status: 403 })
     }
 
     await db.delete(projects).where(eq(projects.id, params.id))
