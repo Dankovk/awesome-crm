@@ -1,6 +1,7 @@
 # GitHub CRM
+Cистема управління проєктами (CRM) для публічних проєктів GitHub, побудована на Next.js, TypeScript, PostgreSQL та Drizzle ORM.
 
-Проста система управління проєктами (CRM) для публічних проєктів GitHub, побудована на Next.js, TypeScript, PostgreSQL та Drizzle ORM.
+**Демо: [https://universe-testovoe-production.up.railway.app](https://universe-testovoe-production.up.railway.app)**
 
 ## Можливості
 
@@ -33,14 +34,8 @@
 - Bun 1.0+
 - Docker та Docker Compose (для запуску PostgreSQL)
 
-### 1. Клонування репозиторію
 
-```bash
-git clone https://github.com/your-username/github-crm.git
-cd github-crm
-```
-
-### 2. Встановлення залежностей
+### 1. Встановлення залежностей
 
 Проєкт використовує `bun` як пакетний менеджер.
 
@@ -48,7 +43,7 @@ cd github-crm
 bun install
 ```
 
-### 3. Налаштування середовища
+### 2. Налаштування середовища
 
 Створіть файл `.env.local` з копії `.env.example` та заповніть його вашими даними.
 
@@ -79,7 +74,7 @@ GITHUB_ID="YOUR_GITHUB_ID"
 GITHUB_SECRET="YOUR_GITHUB_SECRET"
 ```
 
-### 4. Запуск бази даних
+### 3. Запуск бази даних
 
 Найпростіший спосіб запустити PostgreSQL - це використати Docker.
 
@@ -87,7 +82,7 @@ GITHUB_SECRET="YOUR_GITHUB_SECRET"
 docker-compose up -d postgres
 ```
 
-### 5. Налаштування Drizzle ORM
+### 4. Налаштування Drizzle ORM
 
 ```bash
 # Генерація міграцій (якщо ви змінили схему)
@@ -97,7 +92,7 @@ bun run db:generate
 bun run db:push
 ```
 
-### 6. Запуск додатку
+### 5. Запуск додатку
 
 ```bash
 # Режим розробки
