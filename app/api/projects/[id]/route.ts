@@ -1,12 +1,21 @@
 import { type GitHubRepoData, ProjectModel } from '@/lib/model/project.model';
 import { UserModel } from '@/lib/model/user.model';
 import { authOptions } from '@/lib/util/auth';
+import { type AuthOptions } from 'next-auth';
 import { getServerSession } from 'next-auth/next';
 import { type NextRequest, NextResponse } from 'next/server';
 
+const getSession = async (authOptions: AuthOptions) => {
+    return (await getServerSession(authOptions)) as {
+        user: {
+            id: string;
+        };
+    };
+};
+
 export async function PUT(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getSession(authOptions);
 
         if (!session?.user?.id) {
             return NextResponse.json({ message: 'Не авторизований' }, { status: 401 });
@@ -83,7 +92,7 @@ export async function PUT(_request: NextRequest, { params }: { params: Promise<{
 
 export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getSession(authOptions);
 
         if (!session?.user?.id) {
             return NextResponse.json({ message: 'Не авторизований' }, { status: 401 });
