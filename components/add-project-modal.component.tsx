@@ -1,11 +1,22 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Github, Info, X } from 'lucide-react';
+import { Github, Info } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
 import { z } from 'zod';
+
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 const addProjectSchema = z.object({
     repoPath: z
@@ -38,14 +49,13 @@ interface AddProjectModalProps {
 
 export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const { toast } = useToast();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-    } = useForm<AddProjectForm>({
+    const form = useForm<AddProjectForm>({
         resolver: zodResolver(addProjectSchema),
+        defaultValues: {
+            repoPath: '',
+        },
     });
 
     const onSubmit = async (data: AddProjectForm) => {
@@ -62,114 +72,96 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
             if (res.ok) {
                 const newProject = await res.json();
                 onAdd(newProject);
-                toast.success('Проєкт додано успішно!');
-                reset();
+                toast({
+                    title: 'Успіх!',
+                    description: 'Проєкт додано успішно!',
+                });
+                form.reset();
                 onClose();
             } else {
                 const error = await res.json();
-                toast.error(error.message || 'Помилка при додаванні проєкту');
+                toast({
+                    variant: 'destructive',
+                    title: 'Помилка',
+                    description: error.message || 'Помилка при додаванні проєкту',
+                });
             }
         } catch (_error) {
-            toast.error('Помилка при додаванні проєкту');
+            toast({
+                variant: 'destructive',
+                title: 'Помилка',
+                description: 'Помилка при додаванні проєкту',
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleClose = () => {
-        reset();
+        form.reset();
         onClose();
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={handleClose}></div>
-                </div>
+        <Dialog open={isOpen} onOpenChange={handleClose}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <div className="flex items-center space-x-2">
+                        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                            <Github className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                        <DialogTitle>Додати новий проєкт</DialogTitle>
+                    </div>
+                    <DialogDescription>
+                        Введіть шлях до GitHub репозиторію у форматі owner/repository
+                    </DialogDescription>
+                </DialogHeader>
 
-                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-                    &#8203;
-                </span>
-
-                <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                    <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div className="sm:flex sm:items-start">
-                            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary sm:mx-0 sm:h-10 sm:w-10">
-                                <Github className="h-6 w-6 text-white" />
-                            </div>
-                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900">Додати новий проєкт</h3>
-                                <div className="mt-2">
-                                    <p className="text-sm text-gray-500">
-                                        Введіть шлях до GitHub репозиторію у форматі owner/repository
-                                    </p>
-
-                                    {/* Info about public repos */}
-                                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                        <div className="flex">
-                                            <Info className="h-4 w-4 text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
-                                            <div className="text-sm text-blue-700">
-                                                <p className="font-medium">Публічні репозиторії</p>
-                                                <p className="mt-1">
-                                                    Ви можете додавати публічні репозиторії без GitHub токену. Для
-                                                    приватних репозиторіїв увійдіть через GitHub.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-                                    <div>
-                                        <label htmlFor="repoPath" className="block text-sm font-medium text-gray-700">
-                                            Шлях до репозиторію
-                                        </label>
-                                        <div className="mt-1">
-                                            <input
-                                                {...register('repoPath')}
-                                                type="text"
-                                                placeholder="Наприклад: facebook/react"
-                                                className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-md"
-                                                disabled={isLoading}
-                                            />
-                                        </div>
-                                        {errors.repoPath && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.repoPath.message}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                        <button
-                                            type="submit"
-                                            disabled={isLoading}
-                                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {isLoading ? 'Додаємо...' : 'Додати'}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={handleClose}
-                                            disabled={isLoading}
-                                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:w-auto sm:text-sm"
-                                        >
-                                            Відміна
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                {/* Info about public repos */}
+                <div className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-md">
+                    <div className="flex">
+                        <Info className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
+                        <div className="text-sm text-blue-700 dark:text-blue-300">
+                            <p className="font-medium">Публічні репозиторії</p>
+                            <p className="mt-1">
+                                Ви можете додавати публічні репозиторії без GitHub токену. Для приватних репозиторіїв
+                                увійдіть через GitHub.
+                            </p>
                         </div>
                     </div>
-                    <button
-                        onClick={handleClose}
-                        className="absolute top-0 right-0 mt-4 mr-4 text-gray-400 hover:text-gray-600"
-                    >
-                        <X className="h-6 w-6" />
-                    </button>
                 </div>
-            </div>
-        </div>
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="repoPath"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Шлях до репозиторію</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Наприклад: facebook/react"
+                                            disabled={isLoading}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="flex space-x-2 pt-4">
+                            <Button type="submit" disabled={isLoading} className="flex-1">
+                                {isLoading ? 'Додаємо...' : 'Додати'}
+                            </Button>
+                            <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
+                                Відміна
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }

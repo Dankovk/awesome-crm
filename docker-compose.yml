@@ -23,27 +23,27 @@ services:
 
 
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: github-crm-app
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/github_crm
-      - NEXTAUTH_URL=http://localhost:3000
-      - NEXTAUTH_SECRET=CXSDH+H4t5QyhjZ1f34nMZ/PbB/gu4arEUR7afrR6cA=
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_ID=Ov23liz3FmUCbPAe3yge
-      - GITHUB_SECRET=cc300d595a13d60feb138ec981715fe6127debcb
-    ports:
-      - "3000:3000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - github-crm-network
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: github-crm-app
+  #   restart: unless-stopped
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/github_crm
+  #     - NEXTAUTH_URL=http://localhost:3000
+  #     - NEXTAUTH_SECRET=CXSDH+H4t5QyhjZ1f34nMZ/PbB/gu4arEUR7afrR6cA=
+  #     - GITHUB_TOKEN=${GITHUB_TOKEN}
+  #     - GITHUB_ID=Ov23liz3FmUCbPAe3yge
+  #     - GITHUB_SECRET=cc300d595a13d60feb138ec981715fe6127debcb
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - github-crm-network
 
 
 volumes:
