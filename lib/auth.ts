@@ -1,7 +1,7 @@
 import { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
-import { UserEntity } from '@/lib/entities/user'
+import { UserModel } from '@/lib/entity/user'
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -20,13 +20,13 @@ export const authOptions: AuthOptions = {
           return null
         }
 
-        const user = await UserEntity.findByEmail(credentials.email)
+        const user = await UserModel.findByEmail(credentials.email)
 
         if (!user) {
           return null
         }
 
-        const isPasswordValid = await UserEntity.verifyPassword(
+        const isPasswordValid = await UserModel.verifyPassword(
           credentials.password,
           user.password
         )
@@ -50,10 +50,10 @@ export const authOptions: AuthOptions = {
       if (account?.provider === 'github') {
         try {
           // Check if user exists
-          const existingUser = await UserEntity.findByEmail(user.email!)
+          const existingUser = await UserModel.findByEmail(user.email!)
           
           if (!existingUser) {
-            const newUser = await UserEntity.create({
+            const newUser = await UserModel.create({
               email: user.email!,
               password: '', // No password for OAuth users
               githubId: (profile as any)?.id?.toString(),
@@ -62,7 +62,7 @@ export const authOptions: AuthOptions = {
             
             user.id = newUser.id
           } else {
-            const updatedUser = await UserEntity.update(existingUser.id, {
+            const updatedUser = await UserModel.update(existingUser.id, {
               githubId: (profile as any)?.id?.toString(),
               githubToken: account.access_token || '',
             })

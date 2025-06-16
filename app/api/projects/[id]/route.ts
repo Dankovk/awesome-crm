@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { ProjectEntity, type GitHubRepoData } from '@/lib/entities/project'
-import { UserEntity } from '@/lib/entities/user'
+import { ProjectModel, type GitHubRepoData } from '@/lib/entity/project'
+import { UserModel } from '@/lib/entity/user'
 
 export async function PUT(
   request: NextRequest,
@@ -16,18 +16,18 @@ export async function PUT(
     }
 
     const { id } = await params
-    const project = await ProjectEntity.findById(id)
+    const project = await ProjectModel.findById(id)
 
     if (!project) {
       return NextResponse.json({ message: 'Проєкт не знайдено' }, { status: 404 })
     }
 
-    if (!await ProjectEntity.belongsToUser(id, session.user.id)) {
+    if (!await ProjectModel.belongsToUser(id, session.user.id)) {
       return NextResponse.json({ message: 'Немає доступу' }, { status: 403 })
     }
 
     // Get user info including GitHub token
-    const user = await UserEntity.findById(session.user.id)
+    const user = await UserModel.findById(session.user.id)
     
     // Use user's GitHub token if available, otherwise try without authentication for public repos
     const githubToken = user?.githubToken || process.env.GITHUB_TOKEN
@@ -77,7 +77,7 @@ export async function PUT(
     const githubData: GitHubRepoData = await githubResponse.json()
 
     // Оновлюємо проєкт
-    const updatedProject = await ProjectEntity.updateFromGitHub(id, githubData)
+    const updatedProject = await ProjectModel.updateFromGitHub(id, githubData)
 
     return NextResponse.json(updatedProject)
   } catch (error) {
@@ -101,17 +101,17 @@ export async function DELETE(
     }
 
     const { id } = await params
-    const project = await ProjectEntity.findById(id)
+    const project = await ProjectModel.findById(id)
 
     if (!project) {
       return NextResponse.json({ message: 'Проєкт не знайдено' }, { status: 404 })
     }
 
-    if (!await ProjectEntity.belongsToUser(id, session.user.id)) {
+    if (!await ProjectModel.belongsToUser(id, session.user.id)) {
       return NextResponse.json({ message: 'Немає доступу' }, { status: 403 })
     }
 
-    await ProjectEntity.delete(id)
+    await ProjectModel.delete(id)
 
     return NextResponse.json({ message: 'Проєкт видалено' })
   } catch (error) {

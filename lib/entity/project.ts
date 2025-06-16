@@ -15,7 +15,7 @@ export interface GitHubRepoData {
   language: string | null
 }
 
-export class ProjectEntity {
+export class ProjectModel {
   static async findById(id: string): Promise<Project | null> {
     const result = await db.select().from(projects).where(eq(projects.id, id)).limit(1)
     return result[0] || null

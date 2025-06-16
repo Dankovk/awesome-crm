@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { ProjectEntity } from '@/lib/entities/project'
-import { UserEntity } from '@/lib/entities/user'
+import { ProjectModel } from '@/lib/entity/project'
+import { UserModel } from '@/lib/entity/user'
 import { z } from 'zod'
 
 const createProjectSchema = z.object({
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
     }
 
-    const userProjects = await ProjectEntity.findByUserId(session.user.id)
+    const userProjects = await ProjectModel.findByUserId(session.user.id)
 
     return NextResponse.json(userProjects)
   } catch (error) {
@@ -43,14 +43,14 @@ export async function POST(request: NextRequest) {
     const [owner, name] = repoPath.split('/')
 
     // Get user info including GitHub token
-    const user = await UserEntity.findById(session.user.id)
+    const user = await UserModel.findById(session.user.id)
     
     if (!user) {
       return NextResponse.json({ message: 'Користувач не знайдений' }, { status: 404 })
     }
 
     // Перевіряємо, чи не існує вже такий проєкт у користувача
-    if (await ProjectEntity.exists(session.user.id, owner, name)) {
+    if (await ProjectModel.exists(session.user.id, owner, name)) {
       return NextResponse.json(
         { message: 'Цей репозиторій вже доданий' },
         { status: 400 }
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Створюємо проєкт в базі даних
-    const project = await ProjectEntity.create({
+    const project = await ProjectModel.create({
       owner,
       name,
       url: githubData.html_url,

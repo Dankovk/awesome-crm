@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { UserEntity } from '@/lib/entities/user'
+import { UserModel } from '@/lib/entity/user'
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = registerSchema.parse(body)
 
     // Перевіряємо, чи існує користувач
-    if (await UserEntity.exists(email)) {
+    if (await UserModel.exists(email)) {
       return NextResponse.json(
         { message: 'Користувач з таким email вже існує' },
         { status: 400 }
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Створюємо користувача
-    const user = await UserEntity.create({
+    const user = await UserModel.create({
       email,
       password,
     })

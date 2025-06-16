@@ -8,7 +8,7 @@ export type UpdateUserData = Partial<Pick<NewUser, 'githubId' | 'githubToken'>> 
   updatedAt?: Date
 }
 
-export class UserEntity {
+export class UserModel {
   static async findByEmail(email: string): Promise<User | null> {
     const result = await db.select().from(users).where(eq(users.email, email)).limit(1)
     return result[0] || null
