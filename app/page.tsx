@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { LoadingSpinner } from '@/components/loading-spinner.component'
+import { LoadingSpinner } from '@/components/loading-spinner.component';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+    const { data: session, status } = useSession();
+    const router = useRouter();
 
-  useEffect(() => {
-    if (status === 'loading') return
+    useEffect(() => {
+        if (status === 'loading') return;
 
-    if (session) {
-      router.push('/dashboard')
-    } else {
-      router.push('/auth/login')
+        if (session) {
+            router.push('/dashboard');
+        } else {
+            router.push('/auth/login');
+        }
+    }, [session, status, router]);
+
+    if (status === 'loading') {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <LoadingSpinner />
+            </div>
+        );
     }
-  }, [session, status, router])
 
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    )
-  }
-
-  return null
-} 
+    return null;
+}

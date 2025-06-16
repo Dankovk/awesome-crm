@@ -44,7 +44,7 @@ WORKDIR /app
 ENV NODE_ENV production
 
 # Створюємо користувача для безпеки
-RUN addgroup --system --gid 1001 bun
+RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 
@@ -58,15 +58,15 @@ COPY --from=builder /app/node_modules ./node_modules
 
 
 COPY --from=builder /app/drizzle ./drizzle
-COPY --from=builder /app/lib/schema.ts ./lib/schema.ts
+COPY --from=builder /app/lib/db/schema.ts ./lib/db/schema.ts
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 
 
-COPY --from=builder --chown=nextjs:bun /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:bun /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 
-COPY --chown=nextjs:bun ./scripts/docker-entrypoint.sh ./entrypoint.sh
+COPY --chown=nextjs:nodejs ./scripts/docker-entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 EXPOSE 3000

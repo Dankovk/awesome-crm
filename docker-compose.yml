@@ -21,27 +21,27 @@ services:
       timeout: 5s
       retries: 5
 
-# Розкоментуйте цей блок, якщо хочете запустити додаток в Dockerб але краще запустити його локально
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: github-crm-app
-  #   restart: unless-stopped
-  #   environment:
-  #     - NODE_ENV=production
-  #     - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/github_crm
-  #     - NEXTAUTH_URL=http://localhost:3000
-  #     - NEXTAUTH_SECRET=your-secret-key-here-change-in-production
-  #     - GITHUB_TOKEN=${GITHUB_TOKEN}
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   networks:
-  #     - github-crm-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: github-crm-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/github_crm
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=your-secret-key-here-change-in-production
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - github-crm-network
 
 
 volumes:

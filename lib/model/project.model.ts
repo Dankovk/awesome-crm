@@ -1,92 +1,89 @@
-import { db } from '@/lib/db/db'
-import { projects, type Project, type NewProject } from '@/lib/db/schema'
-import { eq, and, desc } from 'drizzle-orm'
+import { db } from '@/lib/db/db';
+import { type NewProject, type Project, projects } from '@/lib/db/schema';
+import { and, desc, eq } from 'drizzle-orm';
 
-export type CreateProjectData = Omit<NewProject, 'id' | 'createdAt' | 'updatedAt'>
+export type CreateProjectData = Omit<NewProject, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateProjectData = Partial<Pick<NewProject, 'description' | 'language' | 'stars' | 'forks' | 'issues'>> & {
-  updatedAt?: Date
-}
+    updatedAt?: Date;
+};
 
 export interface GitHubRepoData {
-  stargazers_count: number
-  forks_count: number
-  open_issues_count: number
-  description: string | null
-  language: string | null
+    stargazers_count: number;
+    forks_count: number;
+    open_issues_count: number;
+    description: string | null;
+    language: string | null;
 }
 
 export class ProjectModel {
-  static async findById(id: string): Promise<Project | null> {
-    const result = await db.select().from(projects).where(eq(projects.id, id)).limit(1)
-    return result[0] || null
-  }
+    static async findById(id: string): Promise<Project | null> {
+        const result = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+        return result[0] || null;
+    }
 
-  static async findByUserAndRepo(userId: string, owner: string, name: string): Promise<Project | null> {
-    const result = await db
-      .select()
-      .from(projects)
-      .where(
-        and(
-          eq(projects.userId, userId),
-          eq(projects.owner, owner),
-          eq(projects.name, name)
-        )
-      )
-      .limit(1)
-    
-    return result[0] || null
-  }
+    static async findByUserAndRepo(userId: string, owner: string, name: string): Promise<Project | null> {
+        const result = await db
+            .select()
+            .from(projects)
+            .where(and(eq(projects.userId, userId), eq(projects.owner, owner), eq(projects.name, name)))
+            .limit(1);
 
-  static async findByUserId(userId: string): Promise<Project[]> {
-    return db.select().from(projects).where(eq(projects.userId, userId)).orderBy(desc(projects.createdAt))
-  }
+        return result[0] || null;
+    }
 
-  static async create(projectData: CreateProjectData): Promise<Project> {
-    const now = new Date()
+    static async findByUserId(userId: string): Promise<Project[]> {
+        return db.select().from(projects).where(eq(projects.userId, userId)).orderBy(desc(projects.createdAt));
+    }
 
-    const [project] = await db.insert(projects).values({
-      ...projectData,
-      createdAt: now,
-      updatedAt: now,
-    }).returning()
+    static async create(projectData: CreateProjectData): Promise<Project> {
+        const now = new Date();
 
-    return project
-  }
+        const [project] = await db
+            .insert(projects)
+            .values({
+                ...projectData,
+                createdAt: now,
+                updatedAt: now,
+            })
+            .returning();
 
-  static async update(id: string, updateData: UpdateProjectData): Promise<Project> {
-    const [project] = await db
-      .update(projects)
-      .set({
-        ...updateData,
-        updatedAt: updateData.updatedAt || new Date(),
-      })
-      .where(eq(projects.id, id))
-      .returning()
+        return project;
+    }
 
-    return project
-  }
+    static async update(id: string, updateData: UpdateProjectData): Promise<Project> {
+        const [project] = await db
+            .update(projects)
+            .set({
+                ...updateData,
+                updatedAt: updateData.updatedAt || new Date(),
+            })
+            .where(eq(projects.id, id))
+            .returning();
 
-  static async updateFromGitHub(id: string, githubData: GitHubRepoData): Promise<Project> {
-    return this.update(id, {
-      stars: githubData.stargazers_count,
-      forks: githubData.forks_count,
-      issues: githubData.open_issues_count,
-      description: githubData.description || undefined,
-      language: githubData.language || undefined,
-    })
-  }
+        return project;
+    }
 
-  static async delete(id: string) {
-    await db.delete(projects).where(eq(projects.id, id))
-  }
+    static async updateFromGitHub(id: string, githubData: GitHubRepoData): Promise<Project> {
+        return ProjectModel.update(id, {
+            stars: githubData.stargazers_count,
+            forks: githubData.forks_count,
+            issues: githubData.open_issues_count,
+            description: githubData.description || undefined,
+            language: githubData.language || undefined,
+        });
+    }
 
-  static async exists(userId: string, owner: string, name: string) {
-    const project = await this.findByUserAndRepo(userId, owner, name)
-    return !!project
-  }
+    static async delete(id: string) {
+        await db.delete(projects).where(eq(projects.id, id));
+    }
 
-  static async belongsToUser(projectId: string, userId: string) {
-    const project = await this.findById(projectId)
-    return project?.userId === userId
-  }
-} 
+    static async exists(userId: string, owner: string, name: string) {
+        const project = await ProjectModel.findByUserAndRepo(userId, owner, name);
+        return !!project;
+    }
+
+    static async belongsToUser(projectId: string, userId: string) {
+        const project = await ProjectModel.findById(projectId);
+        return project?.userId === userId;
+    }
+}

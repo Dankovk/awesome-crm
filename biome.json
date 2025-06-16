@@ -1,0 +1,94 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+    "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
+    "files": { "ignoreUnknown": false, "ignore": [] },
+    "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 4, "lineWidth": 120 },
+    "organizeImports": { "enabled": true },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": false,
+            "complexity": {
+                "noExtraBooleanCast": "error",
+                "noMultipleSpacesInRegularExpressionLiterals": "error",
+                "noUselessCatch": "error",
+                "noWith": "error"
+            },
+            "correctness": {
+                "noConstAssign": "error",
+                "noConstantCondition": "error",
+                "noEmptyCharacterClassInRegex": "error",
+                "noEmptyPattern": "error",
+                "noGlobalObjectCalls": "error",
+                "noInvalidBuiltinInstantiation": "error",
+                "noInvalidConstructorSuper": "error",
+                "noNonoctalDecimalEscape": "error",
+                "noPrecisionLoss": "error",
+                "noSelfAssign": "error",
+                "noSetterReturn": "error",
+                "noSwitchDeclarations": "error",
+                "noUndeclaredVariables": "error",
+                "noUnreachable": "error",
+                "noUnreachableSuper": "error",
+                "noUnsafeFinally": "error",
+                "noUnsafeOptionalChaining": "error",
+                "noUnusedImports": "error",
+                "noUnusedLabels": "error",
+                "noUnusedPrivateClassMembers": "error",
+                "noUnusedVariables": "error",
+                "useIsNan": "error",
+                "useValidForDirection": "error",
+                "useYield": "error"
+            },
+            "suspicious": {
+                "noAsyncPromiseExecutor": "error",
+                "noCatchAssign": "error",
+                "noClassAssign": "error",
+                "noCompareNegZero": "error",
+                "noControlCharactersInRegex": "error",
+                "noDebugger": "error",
+                "noDuplicateCase": "error",
+                "noDuplicateClassMembers": "error",
+                "noDuplicateObjectKeys": "error",
+                "noDuplicateParameters": "error",
+                "noEmptyBlockStatements": "error",
+                "noFallthroughSwitchClause": "error",
+                "noFunctionAssign": "error",
+                "noGlobalAssign": "error",
+                "noImportAssign": "error",
+                "noMisleadingCharacterClass": "error",
+                "noPrototypeBuiltins": "error",
+                "noRedeclare": "error",
+                "noShadowRestrictedNames": "error",
+                "noSparseArray": "error",
+                "noUnsafeNegation": "error",
+                "useGetterReturn": "error",
+                "useValidTypeof": "error"
+            }
+        }
+    },
+    "javascript": { "formatter": { "indentStyle": "space", "indentWidth": 4, "quoteStyle": "single" } },
+    "overrides": [
+        {
+            "include": ["**/*.{js,jsx,ts,tsx}"],
+            "javascript": { "globals": [] },
+            "linter": {
+                "rules": {
+                    "a11y": { "useKeyWithClickEvents": "off", "useValidAnchor": "off" },
+                    "complexity": {
+                        "noBannedTypes": "off",
+                        "noUselessConstructor": "off",
+                        "useOptionalChain": "error"
+                    },
+                    "correctness": {
+                        "noInvalidUseBeforeDeclaration": "error",
+                        "noUnusedImports": "error",
+                        "noUnusedVariables": "error"
+                    },
+                    "style": { "noInferrableTypes": "off", "useDefaultSwitchClause": "off" },
+                    "suspicious": { "noArrayIndexKey": "off", "noConsole": "error" }
+                }
+            }
+        }
+    ]
+}

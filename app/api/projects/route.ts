@@ -1,166 +1,155 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/util/auth'
-import { ProjectModel } from '@/lib/model/project.model'
-import { UserModel } from '@/lib/model/user.model'
-import { z } from 'zod'
+import { type GitHubRepoData, ProjectModel } from '@/lib/model/project.model';
+import { UserModel } from '@/lib/model/user.model';
+import { authOptions } from '@/lib/util/auth';
+import { getServerSession } from 'next-auth/next';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const createProjectSchema = z.object({
-  repoPath: z.string().regex(/^[\w\-\.]+\/[\w\-\.]+$/, 'Неверний формат пути до репозиторію (наприклад: facebook/react)'),
-})
+    repoPath: z
+        .string()
+        .regex(/^[\w\-\.]+\/[\w\-\.]+$/, 'Неверний формат пути до репозиторію (наприклад: facebook/react)'),
+});
 
-export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
+export async function GET(_request: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user?.id) {
+            return NextResponse.json({ message: 'Не авторизований' }, { status: 401 });
+        }
+
+        const userProjects = await ProjectModel.findByUserId(session.user.id);
+
+        return NextResponse.json(userProjects);
+    } catch (error) {
+        console.error('Get projects error:', error);
+        return NextResponse.json({ message: 'Помилка при завантаженні проєктів' }, { status: 500 });
     }
-
-    const userProjects = await ProjectModel.findByUserId(session.user.id)
-
-    return NextResponse.json(userProjects)
-  } catch (error) {
-    console.error('Get projects error:', error)
-    return NextResponse.json(
-      { message: 'Помилка при завантаженні проєктів' },
-      { status: 500 }
-    )
-  }
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-    
-    if (!session?.user?.id) {
-      return NextResponse.json({ message: 'Не авторизований' }, { status: 401 })
-    }
-
-    const body = await request.json()
-    const { repoPath } = createProjectSchema.parse(body)
-
-    const [owner, name] = repoPath.split('/')
-
-    // Get user info including GitHub token
-    const user = await UserModel.findById(session.user.id)
-    
-    if (!user) {
-      return NextResponse.json({ message: 'Користувач не знайдений' }, { status: 404 })
-    }
-
-    // Перевіряємо, чи не існує вже такий проєкт у користувача
-    if (await ProjectModel.exists(session.user.id, owner, name)) {
-      return NextResponse.json(
-        { message: 'Цей репозиторій вже доданий' },
-        { status: 400 }
-      )
-    }
-
-    // Try to get GitHub data - first without authentication for public repos
-    let githubResponse
-    let githubData
-
-    // First attempt: Try without authentication (for public repos)
     try {
-      githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'GitHub-CRM-App',
-        },
-      })
+        const session = await getServerSession(authOptions);
 
-      if (githubResponse.ok) {
-        githubData = await githubResponse.json()
-      } else if (githubResponse.status === 404 || githubResponse.status === 403) {
-        // Repository might be private, try with token if available
-        const githubToken = user.githubToken || process.env.GITHUB_TOKEN
-        
-        if (githubToken) {
-          githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
-            headers: {
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'GitHub-CRM-App',
-              'Authorization': `token ${githubToken}`,
-            },
-          })
-
-          if (githubResponse.ok) {
-            githubData = await githubResponse.json()
-          }
+        if (!session?.user?.id) {
+            return NextResponse.json({ message: 'Не авторизований' }, { status: 401 });
         }
-      }
+
+        const body = await request.json();
+        const { repoPath } = createProjectSchema.parse(body);
+
+        const [owner, name] = repoPath.split('/');
+
+        // Get user info including GitHub token
+        const user = await UserModel.findById(session.user.id);
+
+        if (!user) {
+            return NextResponse.json({ message: 'Користувач не знайдений' }, { status: 404 });
+        }
+
+        // Перевіряємо, чи не існує вже такий проєкт у користувача
+        if (await ProjectModel.exists(session.user.id, owner, name)) {
+            return NextResponse.json({ message: 'Цей репозиторій вже доданий' }, { status: 400 });
+        }
+
+        // Try to get GitHub data - first without authentication for public repos
+        let githubResponse: Response | null = null;
+        let githubData: GitHubRepoData | null = null;
+
+        // First attempt: Try without authentication (for public repos)
+        try {
+            githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
+                headers: {
+                    Accept: 'application/vnd.github.v3+json',
+                    'User-Agent': 'GitHub-CRM-App',
+                },
+            });
+
+            if (githubResponse.ok) {
+                githubData = await githubResponse.json();
+            } else if (githubResponse.status === 404 || githubResponse.status === 403) {
+                // Repository might be private, try with token if available
+                const githubToken = user.githubToken || process.env.GITHUB_TOKEN;
+
+                if (githubToken) {
+                    githubResponse = await fetch(`https://api.github.com/repos/${repoPath}`, {
+                        headers: {
+                            Accept: 'application/vnd.github.v3+json',
+                            'User-Agent': 'GitHub-CRM-App',
+                            Authorization: `token ${githubToken}`,
+                        },
+                    });
+
+                    if (githubResponse.ok) {
+                        githubData = await githubResponse.json();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('GitHub API fetch error:', error);
+        }
+
+        // Handle the response
+        if (!githubResponse || !githubResponse.ok) {
+            if (githubResponse?.status === 404) {
+                return NextResponse.json({ message: 'Репозиторій не знайдений або є приватним' }, { status: 404 });
+            }
+            if (githubResponse?.status === 403) {
+                return NextResponse.json(
+                    {
+                        message: 'Доступ заборонений. Можливо, репозиторій приватний і потребує GitHub токен.',
+                    },
+                    { status: 403 },
+                );
+            }
+            if (githubResponse?.status === 401) {
+                return NextResponse.json(
+                    {
+                        message:
+                            'Неправильний GitHub токен. Увійдіть через GitHub для доступу до приватних репозиторіїв.',
+                    },
+                    { status: 401 },
+                );
+            }
+            if (githubResponse?.status === 429) {
+                return NextResponse.json(
+                    {
+                        message:
+                            'Перевищений ліміт запитів до GitHub API. Спробуйте пізніше або увійдіть через GitHub.',
+                    },
+                    { status: 429 },
+                );
+            }
+
+            return NextResponse.json({ message: 'Помилка при отриманні даних з GitHub API' }, { status: 500 });
+        }
+
+        if (!githubData) {
+            return NextResponse.json({ message: 'Не вдалося отримати дані репозиторію' }, { status: 500 });
+        }
+
+        // Створюємо проєкт в базі даних
+        const project = await ProjectModel.create({
+            owner,
+            name,
+            url: githubData.html_url,
+            stars: githubData.stargazers_count,
+            forks: githubData.forks_count,
+            issues: githubData.open_issues_count,
+            githubId: githubData.id,
+            description: githubData.description,
+            language: githubData.language,
+            userId: session.user.id,
+        });
+
+        return NextResponse.json(project, { status: 201 });
     } catch (error) {
-      console.error('GitHub API fetch error:', error)
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ message: 'Неправильні дані', errors: error.errors }, { status: 400 });
+        }
+
+        console.error('Create project error:', error);
+        return NextResponse.json({ message: 'Помилка при створенні проєкту' }, { status: 500 });
     }
-
-    // Handle the response
-    if (!githubResponse || !githubResponse.ok) {
-      if (githubResponse?.status === 404) {
-        return NextResponse.json(
-          { message: 'Репозиторій не знайдений або є приватним' },
-          { status: 404 }
-        )
-      }
-      if (githubResponse?.status === 403) {
-        return NextResponse.json(
-          { message: 'Доступ заборонений. Можливо, репозиторій приватний і потребує GitHub токен.' },
-          { status: 403 }
-        )
-      }
-      if (githubResponse?.status === 401) {
-        return NextResponse.json(
-          { message: 'Неправильний GitHub токен. Увійдіть через GitHub для доступу до приватних репозиторіїв.' },
-          { status: 401 }
-        )
-      }
-      if (githubResponse?.status === 429) {
-        return NextResponse.json(
-          { message: 'Перевищений ліміт запитів до GitHub API. Спробуйте пізніше або увійдіть через GitHub.' },
-          { status: 429 }
-        )
-      }
-      
-      return NextResponse.json(
-        { message: 'Помилка при отриманні даних з GitHub API' },
-        { status: 500 }
-      )
-    }
-
-    if (!githubData) {
-      return NextResponse.json(
-        { message: 'Не вдалося отримати дані репозиторію' },
-        { status: 500 }
-      )
-    }
-
-    // Створюємо проєкт в базі даних
-    const project = await ProjectModel.create({
-      owner,
-      name,
-      url: githubData.html_url,
-      stars: githubData.stargazers_count,
-      forks: githubData.forks_count,
-      issues: githubData.open_issues_count,
-      githubId: githubData.id,
-      description: githubData.description,
-      language: githubData.language,
-      userId: session.user.id,
-    })
-
-    return NextResponse.json(project, { status: 201 })
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: 'Неправильні дані', errors: error.errors },
-        { status: 400 }
-      )
-    }
-
-    console.error('Create project error:', error)
-    return NextResponse.json(
-      { message: 'Помилка при створенні проєкту' },
-      { status: 500 }
-    )
-  }
-} 
+}
