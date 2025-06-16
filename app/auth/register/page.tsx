@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Github } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -52,7 +53,21 @@ export default function RegisterPage() {
 
             if (res.ok) {
                 toast.success('Акаунт створено успішно!');
-                router.push('/auth/login');
+                
+                // Auto-login after successful registration
+                const signInResult = await signIn('credentials', {
+                    email: data.email,
+                    password: data.password,
+                    redirect: false,
+                });
+                
+                if (signInResult?.error) {
+                    toast.error('Акаунт створено, але виникла помилка при автоматичному вході');
+                    router.push('/auth/login');
+                } else {
+                    toast.success('Успішний вхід!');
+                    router.push('/dashboard');
+                }
             } else {
                 const error = await res.json();
                 toast.error(error.message || 'Сталася помилка при реєстрації');
