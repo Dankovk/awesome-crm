@@ -8,20 +8,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-
-interface Project {
-    id: string;
-    owner: string;
-    name: string;
-    url: string;
-    stars: number;
-    forks: number;
-    issues: number;
-    createdAt: string;
-    updatedAt: string;
-    description?: string;
-    language?: string;
-}
+import { Project } from '@/lib/db/schema';
 
 interface DeleteProjectDialogProps {
     isOpen: boolean;

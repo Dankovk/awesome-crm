@@ -44,7 +44,7 @@ export const authOptions: AuthOptions = {
     },
     callbacks: {
         async signIn({ user, account, profile }) {
-            if (account?.provider === 'github') {
+            if (account?.provider === 'github' && profile) {
                 try {
                     // Check if user exists
                     const existingUser = await UserModel.findByEmail(user.email!);
@@ -53,14 +53,14 @@ export const authOptions: AuthOptions = {
                         const newUser = await UserModel.create({
                             email: user.email!,
                             password: '', // No password for OAuth users
-                            githubId: (profile as any)?.id?.toString(),
+                            githubId: profile.id?.toString(),
                             githubToken: account.access_token || '',
                         });
 
                         user.id = newUser.id;
                     } else {
                         const updatedUser = await UserModel.update(existingUser.id, {
-                            githubId: (profile as any)?.id?.toString(),
+                            githubId: profile.id?.toString(),
                             githubToken: account.access_token || '',
                         });
 
@@ -83,11 +83,15 @@ export const authOptions: AuthOptions = {
             return token;
         },
         async session({ session, token }) {
-            if (token && session.user) {
-                (session.user as any).id = token.id as string;
-                if (token.accessToken) {
-                    (session as any).accessToken = token.accessToken as string;
+            if (token.id) {
+                const user = await UserModel.findById(token.id);
+                if (user) {
+                    session.user = user;
                 }
+            }
+
+            if (token.accessToken) {
+                session.accessToken = token.accessToken;
             }
             return session;
         },

@@ -17,6 +17,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { Project } from '@/lib/db/schema';
 
 const addProjectSchema = z.object({
     repoPath: z
@@ -26,20 +27,6 @@ const addProjectSchema = z.object({
 });
 
 type AddProjectForm = z.infer<typeof addProjectSchema>;
-
-interface Project {
-    id: string;
-    owner: string;
-    name: string;
-    url: string;
-    stars: number;
-    forks: number;
-    issues: number;
-    createdAt: string;
-    updatedAt: string;
-    description?: string;
-    language?: string;
-}
 
 interface AddProjectModalProps {
     isOpen: boolean;

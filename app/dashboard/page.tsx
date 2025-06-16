@@ -12,20 +12,7 @@ import { Github, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-interface Project {
-    id: string;
-    owner: string;
-    name: string;
-    url: string;
-    stars: number;
-    forks: number;
-    issues: number;
-    createdAt: string;
-    updatedAt: string;
-    description?: string;
-    language?: string;
-}
+import { type Project } from '@/lib/db/schema';
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();

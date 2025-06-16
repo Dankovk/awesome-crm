@@ -1,22 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { Project } from '@/lib/db/schema';
 import { format } from 'date-fns';
 import { AlertCircle, Calendar, GitFork, Github, RefreshCw, Star, Trash2 } from 'lucide-react';
-
-interface Project {
-    id: string;
-    owner: string;
-    name: string;
-    url: string;
-    stars: number;
-    forks: number;
-    issues: number;
-    createdAt: string;
-    updatedAt: string;
-    description?: string;
-    language?: string;
-}
 
 interface ProjectCardProps {
     project: Project;
