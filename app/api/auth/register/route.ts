@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { UserModel } from '@/lib/entity/user'
+import { UserModel } from '@/lib/model/user.model'
 
 const registerSchema = z.object({
   email: z.string().email(),

@@ -1,7 +1,7 @@
 import { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
-import { UserModel } from '@/lib/entity/user'
+import { UserModel } from '@/lib/model/user.model'
 
 export const authOptions: AuthOptions = {
   providers: [

@@ -13,8 +13,8 @@ export default defineConfig({
     port: parseInt(process.env.DATABASE_PORT!),
     ssl: process.env.DATABASE_SSL === 'true',
   },
-  verbose: true,
-  strict: true
+  verbose: false,
+  strict: false
 })  
 
 

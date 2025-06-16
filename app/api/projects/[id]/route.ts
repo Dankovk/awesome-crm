@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
-import { ProjectModel, type GitHubRepoData } from '@/lib/entity/project'
-import { UserModel } from '@/lib/entity/user'
+import { authOptions } from '@/lib/util/auth'
+import { ProjectModel, type GitHubRepoData } from '@/lib/model/project.model'
+import { UserModel } from '@/lib/model/user.model'
 
 export async function PUT(
   request: NextRequest,

@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Plus, RefreshCw, Trash2, Star, GitFork, AlertCircle, Calendar, LogOut, Github } from 'lucide-react'
-import { LoadingSpinner } from '@/components/LoadingSpinner'
-import { AddProjectModal } from '@/components/AddProjectModal'
+import { LoadingSpinner } from '@/components/loading-spinner.component'
+import { AddProjectModal } from '@/components/add-project-modal.component'
 import { format } from 'date-fns'
 
 interface Project {

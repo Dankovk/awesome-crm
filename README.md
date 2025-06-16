@@ -20,7 +20,7 @@
 
 ## Технологічний стек
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes
 - **База даних**: PostgreSQL
 - **ORM**: Drizzle ORM
@@ -34,14 +34,6 @@
 
 - Bun 1.0+ (рекомендується) або Node.js 18+
 - PostgreSQL
-- GitHub Personal Access Token
-
-### 1. Клонування репозиторію
-
-```bash
-git clone <repository-url>
-cd github-crm
-```
 
 ### 2. Встановлення залежностей
 
@@ -63,15 +55,21 @@ cp .env.example .env.local
 Заповніть `.env.local`:
 
 ```env
-# Database
-DATABASE_URL="postgresql://username:password@localhost:5432/github_crm?schema=public"
+#
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/github_crm"
+DATABASE_HOST="localhost"
+DATABASE_USER="postgres"
+DATABASE_PASSWORD="postgres"
+DATABASE_NAME="github_crm"
+DATABASE_PORT="5432"
+DATABASE_SSL="false"
 
-# NextAuth
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_SECRET="CXSDH+H4t5QyhjZ1f34nMZ/PbB/gu4arEUR7afrR6cA="
 
-# GitHub API
-GITHUB_TOKEN="your-github-token-here"
+GITHUB_ID="Ov23liz3FmUCbPAe3yge"
+GITHUB_SECRET="cc300d595a13d60feb138ec981715fe6127debcb"
+
 ```
 
 ### 4. Налаштування Drizzle ORM
@@ -97,12 +95,6 @@ bun run start
 
 Додаток буде доступний за адресою [http://localhost:3000](http://localhost:3000)
 
-## Отримання GitHub Token
-
-1. Перейдіть в GitHub Settings → Developer settings → Personal access tokens
-2. Створіть новий токен (Classic)
-3. Виберіть scope: `public_repo` (для доступу до публічних репозиторіїв)
-4. Скопіюйте токен та додайте в `.env.local`
 
 ## Використання
 
@@ -203,31 +195,7 @@ bun run db:generate  # Згенерувати міграції
 ### Docker (локально)
 
 ```bash
-# Запуск з Docker Compose
+
 docker-compose up -d
 
-# Зупинка
-docker-compose down
 ```
-
-### Railway (рекомендується для продакшену)
-
-Для розгортання на Railway дотримуйтесь інструкцій в [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md).
-
-**Швидкий старт:**
-1. Зареєструйтесь на [railway.app](https://railway.app)
-2. Підключіть GitHub репозиторій
-3. Додайте PostgreSQL базу даних
-4. Налаштуйте змінні оточення
-5. Розгорніть додаток
-
-Railway надає:
-- ✅ Безкоштовний тариф ($5/місяць кредитів)
-- ✅ Автоматичні збірки з Dockerfile
-- ✅ Керована PostgreSQL база даних
-- ✅ SSL сертифікати
-- ✅ Моніторинг та логи
-
-## Ліцензія
-
-MIT License 

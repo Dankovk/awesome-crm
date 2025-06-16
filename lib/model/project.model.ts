@@ -1,5 +1,5 @@
-import { db } from '@/lib/db'
-import { projects, type Project, type NewProject } from '@/lib/schema'
+import { db } from '@/lib/db/db'
+import { projects, type Project, type NewProject } from '@/lib/db/schema'
 import { eq, and, desc } from 'drizzle-orm'
 
 export type CreateProjectData = Omit<NewProject, 'id' | 'createdAt' | 'updatedAt'>

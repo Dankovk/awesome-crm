@@ -1,5 +1,4 @@
 services:
-  # PostgreSQL база даних
   postgres:
     image: postgres:15-alpine
     container_name: github-crm-db
@@ -22,7 +21,8 @@ services:
       timeout: 5s
       retries: 5
 
-  # # Next.js додаток
+# Розкоментуйте цей блок, якщо хочете запустити додаток в Dockerб але краще запустити його локально
+
   # app:
   #   build:
   #     context: .
@@ -42,6 +42,7 @@ services:
   #       condition: service_healthy
   #   networks:
   #     - github-crm-network
+
 
 volumes:
   postgres_data:

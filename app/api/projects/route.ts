@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
-import { ProjectModel } from '@/lib/entity/project'
-import { UserModel } from '@/lib/entity/user'
+import { authOptions } from '@/lib/util/auth'
+import { ProjectModel } from '@/lib/model/project.model'
+import { UserModel } from '@/lib/model/user.model'
 import { z } from 'zod'
 
 const createProjectSchema = z.object({
