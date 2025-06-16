@@ -1,5 +1,5 @@
 import { UserModel } from '@/lib/model/user.model';
-import type { AuthOptions } from 'next-auth';
+import { type AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GitHubProvider from 'next-auth/providers/github';
 
@@ -83,10 +83,10 @@ export const authOptions: AuthOptions = {
             return token;
         },
         async session({ session, token }) {
-            if (token) {
-                session.user.id = token.id as string;
+            if (token && session.user) {
+                (session.user as any).id = token.id as string;
                 if (token.accessToken) {
-                    session.accessToken = token.accessToken as string;
+                    (session as any).accessToken = token.accessToken as string;
                 }
             }
             return session;
