@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/util/cn';
 
 interface SpinnerProps extends React.HTMLAttributes<SVGElement> {
     size?: 'sm' | 'md' | 'lg';

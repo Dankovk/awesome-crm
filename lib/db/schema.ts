@@ -30,6 +30,7 @@ export const projects = pgTable('Project', {
     githubId: integer('githubId').notNull(),
     description: text('description'),
     language: text('language'),
+    githubCreatedAt: timestamp('githubCreatedAt'),
     userId: text('userId')
         .notNull()
         .references(() => users.id, { onDelete: 'cascade' }),

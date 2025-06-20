@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Github, LogOut } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/util/cn';
 
 interface HeaderProps {
     transparent?: boolean;

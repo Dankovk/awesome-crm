@@ -7,7 +7,7 @@ import { Header } from '@/components/header.component';
 import { ProjectCard } from '@/components/project-card.component';
 import { DeleteProjectDialog } from '@/components/delete-project-dialog.component';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast.hook';
 import { Github, Plus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';

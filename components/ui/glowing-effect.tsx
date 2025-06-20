@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo, useCallback, useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/util/cn";
 import { animate } from "motion/react";
 
 

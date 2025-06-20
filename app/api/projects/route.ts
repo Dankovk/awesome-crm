@@ -140,6 +140,7 @@ export async function POST(request: NextRequest) {
             githubId: githubData.id,
             description: githubData.description,
             language: githubData.language,
+            githubCreatedAt: new Date(githubData.created_at),
             userId: session.user.id,
         });
 

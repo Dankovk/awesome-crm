@@ -3,16 +3,19 @@ import { type NewProject, type Project, projects } from '@/lib/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 
 export type CreateProjectData = Omit<NewProject, 'id' | 'createdAt' | 'updatedAt'>;
-export type UpdateProjectData = Partial<Pick<NewProject, 'description' | 'language' | 'stars' | 'forks' | 'issues'>> & {
+export type UpdateProjectData = Partial<Pick<NewProject, 'description' | 'language' | 'stars' | 'forks' | 'issues' | 'githubCreatedAt'>> & {
     updatedAt?: Date;
 };
 
 export interface GitHubRepoData {
+    id: number;
     stargazers_count: number;
     forks_count: number;
     open_issues_count: number;
     description: string | null;
     language: string | null;
+    created_at: string;
+    html_url: string;
 }
 
 export class ProjectModel {
@@ -70,6 +73,7 @@ export class ProjectModel {
             issues: githubData.open_issues_count,
             description: githubData.description || undefined,
             language: githubData.language || undefined,
+            githubCreatedAt: new Date(githubData.created_at),
         });
     }
 

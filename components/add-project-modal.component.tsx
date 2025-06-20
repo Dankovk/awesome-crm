@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast.hook';
 import { Project } from '@/lib/db/schema';
 
 const addProjectSchema = z.object({
@@ -111,8 +111,7 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
                         <div className="text-sm text-blue-700 dark:text-blue-300">
                             <p className="font-medium">Публічні репозиторії</p>
                             <p className="mt-1">
-                                Ви можете додавати публічні репозиторії без GitHub токену. Для приватних репозиторіїв
-                                увійдіть через GitHub.
+                                Ви можете додавати публічні репозиторії.
                             </p>
                         </div>
                     </div>

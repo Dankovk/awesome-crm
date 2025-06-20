@@ -55,7 +55,10 @@ export function ProjectCard({ project, isUpdating, onUpdate, onDelete }: Project
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <div className="flex items-center">
                             <Calendar className="h-3 w-3 mr-1" />
-                            {format(new Date(project.createdAt), 'dd.MM.yyyy')}
+                            {project.githubCreatedAt 
+                                ? format(new Date(project.githubCreatedAt), 'dd.MM.yyyy')
+                                : format(new Date(project.createdAt), 'dd.MM.yyyy')
+                            }
                         </div>
                         {project.language && (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
