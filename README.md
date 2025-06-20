@@ -171,6 +171,7 @@ bun run dev
 - `githubId` (number) - ID репозиторію в GitHub
 - `description` (string) - Опис репозиторію
 - `language` (string) - Основна мова програмування
+- `githubCreatedAt` (Date) - Дата створення репозиторію в GitHub
 - `userId` (string) - Зв'язок з користувачем (foreign key)
 - `createdAt` (Date) - Дата додавання
 - `updatedAt` (Date) - Дата останнього оновлення
